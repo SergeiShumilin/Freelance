@@ -11,10 +11,27 @@ def extract_ext(url):
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'xml')
     for url in soup.find_all('loc'):
-        print(url.text)
+        ext_info(url.text)
 
 def ext_info(url):
-    pass
+    """
+    Extract info about particular extension
+
+    Extracts four main features: name, number of users, number of references, rank
+
+    :param url: extension's web page
+
+    """
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, 'html5lib')
+    name = soup.find('h1', class_='e-f-w').get_text()
+    rank = soup.find('span', class_='q-N-nd')['aria-label']
 
 
-parse_sitemap()
+    print(rank)
+    print(name)
+
+
+
+
+ext_info('https://chrome.google.com/webstore/detail/gauges-for-netatmo-weathe/pgdgaeigglghnbkloncmhelglgcinoph')
