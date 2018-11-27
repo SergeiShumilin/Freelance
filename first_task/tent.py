@@ -12,12 +12,14 @@ def parse_sitemap():
     soup = BeautifulSoup(page.content, 'xml')
     i = 0
     for url in soup.find_all('loc'):
-        if i==1: break
+        if i==50: break
         df = extract_ext(url.text)
         main_df = main_df.append(df, ignore_index=True)
         i+=1
 
-    print(main_df)
+    main_df = main_df.drop([0,1])
+    main_df = main_df.reset_index(drop=True)
+    main_df.to_csv('extensions.csv')
 
 
 
@@ -28,7 +30,7 @@ def extract_ext(url):
     soup = BeautifulSoup(page.content, 'xml')
     i = 0
     for url in soup.find_all('loc'):
-        if i == 10: break
+        if i == 100000: break
         df = ext_info(url.text)
         interm_df = interm_df.append(df,ignore_index=True)
         i+=1
@@ -84,7 +86,7 @@ def get_rank(soup):
         elif rank == ' No user rated this item.':
             return 0
         else:
-            return int(re.findall(r'(\d)\s',rank)[0])
+            return float(re.findall(r'(\d)\s',rank)[0])
 
 def get_reviews(url):
     pass # waiting for the good times
