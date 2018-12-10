@@ -6,7 +6,7 @@ import numpy as np
 
 
 def parse_sitemap():
-    main_df = pd.DataFrame(np.array([[0, 0, 0]]), columns=['Name', 'Users', 'Rank'])
+    main_df = pd.DataFrame(np.array([[0, 0, 0, 0, 0]]), columns=['Name', 'Users', 'Rank','Num ratings','Link'])
 
     page = requests.get('https://chrome.google.com/webstore/sitemap')
     soup = BeautifulSoup(page.content, 'xml')
@@ -24,7 +24,7 @@ def parse_sitemap():
 
 
 def extract_ext(url):
-    interm_df = pd.DataFrame(np.array([[0, 0, 0]]), columns=['Name', 'Users', 'Rank'])
+    interm_df = pd.DataFrame(np.array([[0, 0, 0, 0, 0]]), columns=['Name', 'Users', 'Rank','Num ratings','Link'])
 
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'xml')
@@ -51,14 +51,15 @@ def ext_info(url):
 
     name = get_name(soup)
 
-    rank = get_rank(soup)  # gets the ext's rank
+    rank = get_rank(soup)
 
     users = get_users(soup)
 
-    reviews = get_reviews(url)
+    ratings = get_ratings(soup)
 
- #   print('Name: '+ name  + '\nRank: ' + str(rank)+ '\nUsers: ' + str(users))
-    return pd.DataFrame([[name, users, rank]], columns=['Name', 'Users', 'Rank'])
+
+    print('Name: '+ name  + '\nRank: ' + str(rank)+ '\nUsers: ' + str(users)+'\nNum ratings: ' + str(ratings)+'\nLink: ' + url)
+    return pd.DataFrame([[name, users, rank,ratings,url]], columns=['Name', 'Users', 'Rank','Num ratings','Link'])
 
 def get_name(soup):
     name_tag = soup.find('h1', class_='e-f-w') #gets the ext's name
@@ -88,8 +89,15 @@ def get_rank(soup):
         else:
             return float(re.findall(r'(\d)\s',rank)[0])
 
-def get_reviews(url):
-    pass # waiting for the good times
+def get_ratings(soup):
+    ratings = soup.find('span', class_='q-N-nd')  # gets the ext's number of ratings
+    if ratings is not None:
+        return int(ratings.get_text()[1:-1])
+    else: return 0
+
+
+
+
 
 parse_sitemap()
 
