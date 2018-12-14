@@ -32,6 +32,7 @@ def parse_sitemap(find_theme=False):
     main_df.to_csv('extensions.csv')
 
 
+
 def extract_ext(url, find_theme):
     if get_theme:
         interm_df = pd.DataFrame(np.array([[0, 0, 0, 0, 0, 0]]),
