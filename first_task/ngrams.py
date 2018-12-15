@@ -1,9 +1,6 @@
-from urllib.request import urlopen
-from bs4 import BeautifulSoup
 import re
 import string
 from collections import Counter
-
 
 def cleanSentence(sentence):
     sentence = sentence.split(' ')
@@ -47,14 +44,13 @@ def isCommon(ngram):
             return True
     return False
 
+
 def getNgrams(content, n):
     content = cleanInput(content)
     ngrams = Counter()
-    ngrams_list = []
     for sentence in content:
         newNgrams = [' '.join(ngram) for ngram in
-                     getNgramsFromSentence(sentence, 2)]
-        ngrams_list.extend(newNgrams)
+                     getNgramsFromSentence(sentence, n)]
         ngrams.update(newNgrams)
     return ngrams
 
