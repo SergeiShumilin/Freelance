@@ -20,13 +20,13 @@ def graph_freq_plot(counter):
     :param counter: Counter object
     """
     counter = dict(counter)
-    pic = wordcloud.WordCloud(width=1600, height=800, colormap='magma',
+    pic = wordcloud.WordCloud(width=1600, height=800, colormap='viridis',
                               background_color='white').generate_from_frequencies(counter)
     plt.figure(figsize=(20, 10))
     plt.imshow(pic, interpolation='bilinear')
     plt.axis('off')
     plt.tight_layout(pad=0)
-    plt.savefig('images/wordcloud2.png', bbox_inches='tight')
+    plt.savefig('images/wordcloud4.png', bbox_inches='tight')
     plt.show()
 
 
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     # df = tent.parse_sitemap(find_theme=True,create_csv=True)
     df = pd.read_csv('extensions.csv')
     text = rt.con_bycolumn(df, 'Description')  # get all descriptions together
-    print(text)
     ngr = ngrams.getNgrams(text, 2)
-    ngr = del_n_comm(ngr)
-    graph_freq_plot(ngr)
+    print(ngr)
+    ngr = del_n_comm(ngr,120)
+    #graph_freq_plot(ngr)

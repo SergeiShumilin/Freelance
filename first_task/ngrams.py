@@ -47,6 +47,7 @@ def isCommon(ngram):
 
 def getNgrams(content, n):
     content = cleanInput(content)
+    print(content)
     ngrams = Counter()
     for sentence in content:
         newNgrams = [' '.join(ngram) for ngram in

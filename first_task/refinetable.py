@@ -8,6 +8,8 @@ def con_bycolumn(df, column):
     :param column: any column
     :return: one large string
     """
+
+    df = df[df[column]!=0].dropna()
     return " ".join(df[column])
 
 def drop_na_desc(table, drop_Descr = False):
@@ -25,5 +27,3 @@ def drop_na_desc(table, drop_Descr = False):
     if drop_Descr:
         df = df.drop(['Description'], axis=1)
     df.to_csv('themes.csv')
-
-
