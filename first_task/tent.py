@@ -11,7 +11,14 @@ import numpy as np
 import re
 
 
-def parse_sitemap(find_theme=False):
+def parse_sitemap(find_theme=False, create_csv = False):
+    """
+    Main here to parse the Chrome's sitemap
+
+    :param find_theme:  bool if True searching for extension containing the word theme or Theme
+    :param create_csv:  bool if True creates a .scv in the source folder with retrieved extensions
+    :return: df with all found extensions
+    """
     if find_theme:
         main_df = pd.DataFrame(np.array([[0, 0, 0, 0, 0, 0]]), columns=['Name', 'Users', 'Rank', 'Num ratings', 'Link',
                                                                         'Description'])
@@ -19,18 +26,19 @@ def parse_sitemap(find_theme=False):
         main_df = pd.DataFrame(np.array([[0, 0, 0, 0, 0]]), columns=['Name', 'Users', 'Rank', 'Num ratings', 'Link'])
 
     page = requests.get('https://chrome.google.com/webstore/sitemap')
-    soup = BeautifulSoup(page.content, 'xml')
+    soup = BeautifulSoup(page.content, 'html.parser')
     i = 0
     for url in soup.find_all('loc'):
-        if i == 2: break
+        if i == 100: break
         df = extract_ext(url.text, find_theme)
         main_df = main_df.append(df, ignore_index=True)
         i += 1
 
     main_df = main_df.drop([0, 1])
     main_df = main_df.reset_index(drop=True)
-    main_df.to_csv('extensions.csv')
-
+    if create_csv:
+        main_df.to_csv('extensions.csv')
+    return main_df
 
 
 def extract_ext(url, find_theme):
@@ -42,13 +50,14 @@ def extract_ext(url, find_theme):
         interm_df = pd.DataFrame(np.array([[0, 0, 0, 0, 0]]), columns=['Name', 'Users', 'Rank', 'Num ratings', 'Link'])
 
     page = requests.get(url)
-    soup = BeautifulSoup(page.content, 'xml')
+    soup = BeautifulSoup(page.content, 'html.parser')
     i = 0
     for url in soup.find_all('loc'):
-        if i == 100: break
+        if i == 1000: break
         df = ext_info(url.text, find_theme)
         interm_df = interm_df.append(df, ignore_index=True)
         i += 1
+        print('i = ' + i)
     return interm_df
 
 
@@ -63,7 +72,7 @@ def ext_info(url, find_theme):
 
     """
     page = requests.get(url)
-    soup = BeautifulSoup(page.content, 'html5lib')
+    soup = BeautifulSoup(page.content, 'html.parser')
     name = get_name(soup)
     if find_theme:
         if bool(re.search(r'[Tt]heme', name)):
@@ -142,8 +151,6 @@ def get_description(soup):
     else:
         return ''
 
-
-parse_sitemap(find_theme=True)
 
 # ext_info('https://chrome.google.com/webstore/detail/foodie/hlkgmeebmcmbbfoaamicfcljhcidkdof'
 #         ,find_theme=True)
