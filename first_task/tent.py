@@ -29,7 +29,8 @@ def parse_sitemap(find_theme=False, create_csv = False):
     soup = BeautifulSoup(page.content, 'html.parser')
     i = 0
     for url in soup.find_all('loc'):
-        if i == 100: break
+        print('i = ' + str(i))
+        if i == 300: break
         df = extract_ext(url.text, find_theme)
         main_df = main_df.append(df, ignore_index=True)
         i += 1
@@ -51,13 +52,13 @@ def extract_ext(url, find_theme):
 
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'html.parser')
-    i = 0
+    j = 0
     for url in soup.find_all('loc'):
-        if i == 1000: break
+        if j == 10000: break
         df = ext_info(url.text, find_theme)
         interm_df = interm_df.append(df, ignore_index=True)
-        i += 1
-        print('i = ' + i)
+        j += 1
+        print('j = ' + str(j))
     return interm_df
 
 
@@ -152,5 +153,7 @@ def get_description(soup):
         return ''
 
 
+
+parse_sitemap(find_theme=True,create_csv=True)
 # ext_info('https://chrome.google.com/webstore/detail/foodie/hlkgmeebmcmbbfoaamicfcljhcidkdof'
 #         ,find_theme=True)

@@ -12,7 +12,7 @@ import wordcloud
 import matplotlib.pyplot as plt
 
 
-def graph_freq_plot(counter):
+def text_freq_plot(counter):
     """
     Plot image with frequency distribution of the most frequent words.
 
@@ -30,11 +30,11 @@ def graph_freq_plot(counter):
     plt.show()
 
 
-def freq_plot(counter):
+def linear_freq_plot(counter):
     """Get frequency linear distribution"""
     freqlist = nltk.FreqDist(counter)
     plt.figure(figsize=(16, 5))
-    freqlist.plot(50)
+    freqlist.plot(60)
 
 
 def del_n_comm(counter, del_n=0):
@@ -55,5 +55,6 @@ if __name__ == '__main__':
     text = rt.con_bycolumn(df, 'Description')  # get all descriptions together
     ngr = ngrams.getNgrams(text, 2)
     print(ngr)
-    ngr = del_n_comm(ngr,120)
-    #graph_freq_plot(ngr)
+    ngr = del_n_comm(ngr)  # call any plotting function for this Counter object
+    linear_freq_plot(dict(ngr))
+    # text_freq_plot(ngr)
