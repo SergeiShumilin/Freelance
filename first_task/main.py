@@ -20,13 +20,13 @@ def text_freq_plot(counter):
     :param counter: Counter object
     """
     counter = dict(counter)
-    pic = wordcloud.WordCloud(width=1600, height=800, colormap='viridis',
+    pic = wordcloud.WordCloud(width=1600, height=800, colormap='magma',
                               background_color='white').generate_from_frequencies(counter)
     plt.figure(figsize=(20, 10))
     plt.imshow(pic, interpolation='bilinear')
     plt.axis('off')
     plt.tight_layout(pad=0)
-    plt.savefig('images/wordcloud4.png', bbox_inches='tight')
+    plt.savefig('images/CORAN_one_most_freq_minus200.png', bbox_inches='tight')
     plt.show()
 
 
@@ -51,10 +51,9 @@ def del_n_comm(counter, del_n=0):
 
 if __name__ == '__main__':
     # df = tent.parse_sitemap(find_theme=True,create_csv=True)
-    df = pd.read_csv('extensions.csv')
-    text = rt.con_bycolumn(df, 'Description')  # get all descriptions together
-    ngr = ngrams.getNgrams(text, 2)
-    print(ngr)
-    ngr = del_n_comm(ngr)  # call any plotting function for this Counter object
-    linear_freq_plot(dict(ngr))
-    # text_freq_plot(ngr)
+    # df = pd.read_csv('extensions.csv')
+    # text = rt.con_bycolumn(df, 'Description')  # get all descriptions together
+    book = open('books/Coran.txt','r')
+    ngr = ngrams.getNgrams(book.read(), 1)
+    ngr = del_n_comm(ngr,del_n=200)  # call any plotting function for this Counter object
+    text_freq_plot(dict(ngr))

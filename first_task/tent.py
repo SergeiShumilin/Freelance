@@ -26,32 +26,25 @@ def parse_sitemap(find_theme=False, create_csv = False):
         main_df = pd.DataFrame(np.array([[0, 0, 0, 0, 0]]), columns=['Name', 'Users', 'Rank', 'Num ratings', 'Link'])
 
     page = requests.get('https://chrome.google.com/webstore/sitemap')
-    soup = BeautifulSoup(page.content, 'lxml')
-    finds = soup.find_all('loc')
-    print('-----------------------------------------------------')
-    print(type(finds))
-    print(type(list(finds)))
-    print(list(finds))
-    print(len(list(finds)))
-    i = 0
-    for url in soup.find_all('loc'):
-        print('i = ' + str(i))
-        if i == 300:
-            break
-        df = extract_ext(url.text, find_theme)
-        main_df = main_df.append(df, ignore_index=True)
-        i += 1
-        #  TODO прикрутить блок finally
-
-    main_df = main_df.drop([0, 1])
-    main_df = main_df.reset_index(drop=True)
-    if create_csv:
-        main_df.to_csv('extensions.csv')
-    return main_df
+    soup = BeautifulSoup(page.content, 'html.parser')
+    try:
+        i = 301
+        for url in list(soup.find_all('loc'))[301:501]:
+            print('i = ' + str(i))
+            df = extract_ext(url.text, find_theme)
+            main_df = main_df.append(df, ignore_index=True)
+            i += 1
+    except Exception as e:
+        print(e.__str__())
+    finally:
+        main_df = main_df.reset_index(drop=True)
+        if create_csv:
+            main_df.to_csv('extensions.csv')
+        return main_df
 
 
 def extract_ext(url, find_theme):
-    if get_theme:
+    if find_theme:
         interm_df = pd.DataFrame(np.array([[0, 0, 0, 0, 0, 0]]),
                                  columns=['Name', 'Users', 'Rank', 'Num ratings', 'Link',
                                           'Description'])
@@ -59,7 +52,7 @@ def extract_ext(url, find_theme):
         interm_df = pd.DataFrame(np.array([[0, 0, 0, 0, 0]]), columns=['Name', 'Users', 'Rank', 'Num ratings', 'Link'])
 
     page = requests.get(url)
-    soup = BeautifulSoup(page.content, 'lxml')
+    soup = BeautifulSoup(page.content, 'html.parser')
     for url in soup.find_all('loc'):
         df = ext_info(url.text, find_theme)
         interm_df = interm_df.append(df, ignore_index=True)
@@ -77,7 +70,7 @@ def ext_info(url, find_theme):
 
     """
     page = requests.get(url)
-    soup = BeautifulSoup(page.content, 'html5lib')
+    soup = BeautifulSoup(page.content, 'html.parser')
     name = get_name(soup)
     return get_theme(name,soup,url)
 """    if find_theme:
@@ -92,7 +85,6 @@ def get_ext(name, soup, url):
     rank = get_rank(soup)
     users = get_users(soup)
     ratings = get_ratings(soup)
-    print('extns')
     return pd.DataFrame([[name, users, rank, ratings, url]], columns=['Name', 'Users', 'Rank', 'Num ratings', 'Link'])
 
 
@@ -101,7 +93,7 @@ def get_theme(name, soup, url):
     users = get_users(soup)
     ratings = get_ratings(soup)
     description = get_description(soup)
-    print('theme')
+    print('+extns')
     return pd.DataFrame([[name, users, rank, ratings, url, description]],
                         columns=['Name', 'Users', 'Rank', 'Num ratings', 'Link', 'Description'])
 
@@ -159,7 +151,4 @@ def get_description(soup):
         return ''
 
 
-
-parse_sitemap(find_theme=True,create_csv=True)
-# ext_info('https://chrome.google.com/webstore/detail/foodie/hlkgmeebmcmbbfoaamicfcljhcidkdof'
-#         ,find_theme=True)
+parse_sitemap(create_csv=True,find_theme = True)

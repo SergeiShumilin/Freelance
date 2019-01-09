@@ -4,18 +4,17 @@ from collections import Counter
 
 def cleanSentence(sentence):
     sentence = sentence.split(' ')
-    sentence = [word.strip(string.punctuation + string.whitespace)
+    sentence = [word.strip(string.punctuation + string.whitespace + string.digits)
                 for word in sentence]
-    sentence = [word for word in sentence if len(word) > 1
-                or (word.lower() == 'a' or word.lower() == 'i')]
+    sentence = [word for word in sentence if len(word) > 1]
     return sentence
 
 
 def cleanInput(content):
     content = content.upper()
     content = re.sub('\n', ' ', content)
-    content = bytes(content, "UTF-8")
-    content = content.decode("ascii", "ignore")
+    #content = bytes(content, "UTF-8")
+    #content = content.decode("ascii", "ignore")
     sentences = content.split('. ')
     return [cleanSentence(sentence) for sentence in sentences]
 
@@ -47,11 +46,9 @@ def isCommon(ngram):
 
 def getNgrams(content, n):
     content = cleanInput(content)
-    print(content)
     ngrams = Counter()
     for sentence in content:
         newNgrams = [' '.join(ngram) for ngram in
                      getNgramsFromSentence(sentence, n)]
         ngrams.update(newNgrams)
     return ngrams
-
