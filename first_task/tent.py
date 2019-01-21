@@ -28,8 +28,8 @@ def parse_sitemap(find_theme=False, create_csv = False):
     page = requests.get('https://chrome.google.com/webstore/sitemap')
     soup = BeautifulSoup(page.content, 'html.parser')
     try:
-        i = 301
-        for url in list(soup.find_all('loc'))[301:501]:
+        i = 601
+        for url in list(soup.find_all('loc'))[601:701]:
             print('i = ' + str(i))
             df = extract_ext(url.text, find_theme)
             main_df = main_df.append(df, ignore_index=True)
@@ -141,7 +141,7 @@ def get_ratings(soup):
 def get_description(soup):
     desc_tag = soup.find('pre', class_='C-b-p-j-Oa')  # gets the ext's desc
     short_desc = soup.find('div', class_='C-b-p-j-Pb')  # short description
-    if (desc_tag is not None) & (short_desc is not None):
+    if (desc_tag is not None) & (short_desc is not No e):
         return short_desc.get_text() + desc_tag.get_text()
     elif desc_tag is not None:
         return desc_tag.get_text()
