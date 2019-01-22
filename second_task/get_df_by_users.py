@@ -1,9 +1,9 @@
 import pandas as pd
-
+import nltk
 
 def get_df(down, upper, lang):
     """
-    Sort the df by users and by language.
+    Sort the df by users number and by language.
 
     Saves df to dfs/.
 
@@ -16,3 +16,16 @@ def get_df(down, upper, lang):
     df = df[(df['Users'] > down) & (df['Users'] < upper) & (df['Link'].str.contains('hl=' + lang))]
     df.to_csv('dfs/extension ' + str(down) + '_' + str(upper) + '.csv')
     return df
+
+
+def tokenize(df):
+    """
+    Compile all description in a df into a single text. Make it tokenized.
+
+    :param df: pandas df
+    :return: tokenized text of descriptions in lower case
+    """
+    text = df['Description'].tolist()
+    text = ' '.join(text)
+    text = nltk.word_tokenize(text.lower())
+    return [word for word in text if word.isalpha()]
