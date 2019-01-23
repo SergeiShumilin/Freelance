@@ -1,7 +1,15 @@
+"""
+The module provides functions to work with Pandas dfs and nltk them.
+"""
+
 import pandas as pd
 import nltk
+from nltk import ngrams
+from nltk.corpus import stopwords
+from collections import Counter
 
-def get_df(down, upper, lang):
+
+def getdf(down, upper, lang):
     """
     Sort the df by users number and by language.
 
@@ -26,6 +34,37 @@ def tokenize(df):
     :return: tokenized text of descriptions in lower case
     """
     text = df['Description'].tolist()
-    text = ' '.join(text)
+    text = ' '.join(map(str, text))
     text = nltk.word_tokenize(text.lower())
-    return [word for word in text if word.isalpha()]
+    stopWords = set(stopwords.words('russian'))
+    return [word for word in text if (word.isalpha()) and (word not in stopWords)]
+
+
+def countwords(tokens):
+    """
+    Count occurrences of a word.
+
+    :param tokens:
+    :return: dict with ['word':number of inclusions]
+    """
+    count = Counter(tokens)
+    return dict(count)
+
+
+def getdict(down, upper, lang, ngram=False, n=2):
+    """
+    Return df with users form down to up and lang as language.
+
+    :param n: number of grams
+    :param ngram:
+    :param down:
+    :param upper:
+    :param lang: any code eg 'en' or 'ru'
+    :return: dict with frequency
+    """
+    if ngram:
+        return countwords(ngrams(tokenize(getdf(down, upper, lang)),n))
+    else:
+        return countwords(tokenize(getdf(down, upper, lang)))
+
+
