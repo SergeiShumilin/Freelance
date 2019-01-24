@@ -8,7 +8,7 @@ import wordcloud
 import nltk
 
 
-def text_freq_plot(counter):
+def text_freq_plot(counter,down,upper,lang):
     """
     Plot image with frequency distribution of the most frequent words.
 
@@ -22,12 +22,17 @@ def text_freq_plot(counter):
     plt.imshow(pic, interpolation='bilinear')
     plt.axis('off')
     plt.tight_layout(pad=0)
-    plt.savefig('images/CORAN_one_most_freq_minus200.png', bbox_inches='tight')
+    plt.savefig('images/wcloud'+str(down) + '_' + str(upper) + '_' + lang + '_wc' +  '.png', bbox_inches='tight')
     plt.show()
 
 
-def linear_freq_plot(counter):
+def linear_freq_plot(counter,down,upper,lang):
     """Get frequency linear distribution"""
     freqlist = nltk.FreqDist(counter)
     plt.figure(figsize=(16, 5))
     freqlist.plot(60)
+    plt.imshow(freqlist, interpolation='bilinear')
+    plt.axis('off')
+    plt.tight_layout(pad=0)
+    plt.savefig('images/wcloud'+str(down) + '_' + str(upper) + '_' + lang + '_lin' + '.png', bbox_inches='tight')
+    plt.show()
