@@ -8,8 +8,10 @@ from nltk import ngrams
 from nltk.corpus import stopwords
 from collections import Counter
 from second_task import graphical as gr
+import seaborn as sns
+import matplotlib.pyplot as plt
 
-def getdf(down, upper, lang):
+def getdf(down, upper, lang=None):
     """
     Sort the df by users number and by language.
 
@@ -20,10 +22,17 @@ def getdf(down, upper, lang):
     :param lang: sort by lang
     :return: sorted pandas df
     """
+    down = down*1000
+    upper = upper*1000
     df = pd.read_csv('../first_task/all_extensions.csv', index_col=0)
-    df = df[(df['Users'] > down) & (df['Users'] < upper) & (df['Link'].str.contains('hl=' + lang))]
+    if lang is not None:
+        df = df[(df['Users'] > down) & (df['Users'] < upper) & (df['Link'].str.contains('hl=' + lang))]
+    else:
+        df = df[(df['Users'] > down) & (df['Users'] < upper)]
     print("df length: " + str(len(df)))
     df.to_csv('dfs/extension ' + str(down) + '_' + str(upper) + '.csv')
+    sns.distplot(df['Users'], kde=False,color='#FB592D')
+    plt.show()
     return df
 
 
@@ -35,10 +44,15 @@ def tokenize(df):
     :return: tokenized text of descriptions in lower case
     """
     text = df['Description'].tolist()
+    print(text)
+    number = len(df['Description'])
     text = ' '.join(map(str, text))
     text = nltk.word_tokenize(text.lower())
     stopWords = set(stopwords.words('english'))
-    return [word for word in text if (word.isalpha()) and (word not in stopWords)]
+    text = [word for word in text if (word.isalpha()) and (word not in stopWords)]
+    length=len(text)
+    print('Средняя длина строки: ' + str(length/number))
+    return text
 
 
 def countwords(tokens, k):
@@ -54,7 +68,7 @@ def countwords(tokens, k):
     return dict(count)
 
 
-def getdict(down, upper, lang, ngram=False, n=2, del_comm=0):
+def getdict(down, upper, lang=None, ngram=False, n=2, del_comm=0):
     """
     Return df with users form down to up and lang as language.
 
@@ -83,7 +97,7 @@ def del_n_comm(counter, del_n=0):
     return counter
 
 
-def gettextplot(down, upper, lang, n=2, ngram=False, del_comm=0):
+def gettextplot(down, upper, lang=None, n=2, ngram=False, del_comm=0):
     """
     Get word cloud.
 
@@ -98,7 +112,9 @@ def gettextplot(down, upper, lang, n=2, ngram=False, del_comm=0):
     gr.text_freq_plot(getdict(down, upper, lang, n=n, ngram=ngram, del_comm=del_comm), down, upper, lang)
 
 
-def getlinearplot(down, upper, lang, n=2, ngram=False, del_comm=0):
+def getlinearplot(down, upper, lang = None, n=2, ngram=False, del_comm=0):
     gr.linear_freq_plot(getdict(down, upper, lang, n=n, ngram=ngram, del_comm=del_comm), down, upper, lang)
 
-getlinearplot(200000,220000, 'en')
+
+#getlinearplot(30000,50000)
+tokenize(getdf(5000,10000))

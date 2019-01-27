@@ -30,9 +30,10 @@ def linear_freq_plot(counter,down,upper,lang):
     """Get frequency linear distribution"""
     freqlist = nltk.FreqDist(counter)
     plt.figure(figsize=(16, 5))
-    freqlist.plot(60)
-    plt.imshow(freqlist, interpolation='bilinear')
+    freqlist.plot(50,color='#192028',linewidth=4)
     plt.axis('off')
     plt.tight_layout(pad=0)
+    if lang is None:
+        lang='all'
     plt.savefig('images/wcloud'+str(down) + '_' + str(upper) + '_' + lang + '_lin' + '.png', bbox_inches='tight')
-    plt.show()
+
